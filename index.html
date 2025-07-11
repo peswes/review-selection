@@ -3,20 +3,507 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Register</title>
-  <link rel="stylesheet" href="public/style.css" />
+  <title>Product Page</title>
+  <style>
+    :root {
+      --pink: hsl(0, 100%, 70%);
+      --white: #fff;
+      --gray: #f2f2f2;
+      --text-dark: #333;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background: var(--gray);
+      color: var(--text-dark);
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: auto;
+      padding: 2rem;
+    }
+
+    .product-page {
+      display: flex;
+      gap: 2rem;
+      flex-wrap: wrap;
+      background: var(--white);
+      padding: 2rem;
+      border-radius: 1.5rem;
+      box-shadow: 0 0 20px rgba(0,0,0,0.1);
+    }
+
+    .product-images {
+      flex: 1;
+      min-width: 300px;
+    }
+
+    .product-images img {
+      width: 100%;
+      border-radius: 1rem;
+      margin-bottom: 1rem;
+      height: 450px;
+      object-fit: cover;
+    }
+
+    .thumbnail-slider {
+      display: flex;
+      gap: 0.75rem;
+      overflow-x: auto;
+      padding-bottom: 0.5rem;
+    }
+
+    .thumbnail-slider img {
+      flex: 0 0 auto;
+      width: 45px;
+      height: 45px;
+      object-fit: cover;
+      border-radius: 0.4rem;
+      cursor: pointer;
+      border: 2px solid transparent;
+      transition: transform 0.2s ease;
+    }
+
+    .thumbnail-slider img.active {
+      border-color: var(--pink);
+      transform: scale(1.05);
+    }
+
+    .product-details {
+      flex: 1;
+      min-width: 300px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .product-info h1 {
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .price {
+      color: var(--pink);
+      font-size: 1.5rem;
+      margin: 1rem 0;
+    }
+
+    .description {
+      font-size: 1rem;
+      line-height: 1.6;
+      color: #555;
+      margin-bottom: 1rem;
+    }
+
+    .sizes {
+      margin-bottom: 1.5rem;
+    }
+
+    .size-options {
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+
+    .size-box {
+      border: 2px solid var(--pink);
+      padding: 0.6rem 1rem;
+      border-radius: 1rem;
+      cursor: pointer;
+      font-weight: bold;
+      background: var(--white);
+      transition: all 0.3s ease;
+    }
+
+    .size-box.selected {
+      background: var(--pink);
+      color: var(--white);
+    }
+
+    .buttons {
+      display: flex;
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    .buttons button {
+      flex: 1;
+      padding: 1rem;
+      border: none;
+      border-radius: 2rem;
+      font-weight: bold;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: 0.3s ease;
+    }
+
+    .add-to-cart {
+      background: var(--pink);
+      color: var(--white);
+    }
+
+    .buy-now {
+      background: var(--white);
+      color: var(--pink);
+      border: 2px solid var(--pink);
+    }
+
+    .add-to-cart:hover {
+      background: hsl(0, 100%, 60%);
+    }
+
+    .buy-now:hover {
+      background: var(--pink);
+      color: var(--white);
+    }
+
+    .similar-products {
+      margin-top: 3rem;
+    }
+
+    .similar-products h2 {
+      color: var(--pink);
+      margin-bottom: 1rem;
+    }
+
+    .similar-list {
+      display: flex;
+      gap: 1rem;
+      overflow-x: auto;
+      padding-bottom: 1rem;
+    }
+
+    .similar-card {
+      background: var(--white);
+      flex: 0 0 180px;
+      border-radius: 1rem;
+      box-shadow: 0 0 10px rgba(0,0,0,0.05);
+      text-align: center;
+      padding: 1rem;
+    }
+
+    .similar-card img {
+      width: 100%;
+      height: 140px;
+      object-fit: cover;
+      border-radius: 0.75rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .similar-card a {
+      display: inline-block;
+      padding: 0.4rem 0.75rem;
+      background: var(--pink);
+      color: #fff;
+      border-radius: 1rem;
+      text-decoration: none;
+      margin-top: 0.3rem;
+    }
+
+    .reviews {
+      margin-top: 3rem;
+      background: var(--white);
+      padding: 2rem;
+      border-radius: 1.5rem;
+      box-shadow: 0 0 15px rgba(0,0,0,0.05);
+    }
+
+    .reviews h2 {
+      color: var(--pink);
+      margin-bottom: 1rem;
+    }
+
+    #reviewForm input, #reviewForm textarea {
+      width: 100%;
+      padding: 0.75rem;
+      margin-bottom: 1rem;
+      border-radius: 0.75rem;
+      border: 1px solid #ccc;
+    }
+
+    .stars span {
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: #ccc;
+    }
+
+    .stars span.selected {
+      color: var(--pink);
+    }
+
+    #reviewForm button {
+      background: var(--pink);
+      color: white;
+      padding: 0.75rem 1.2rem;
+      border: none;
+      border-radius: 1rem;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    #allReviews .review {
+      border-bottom: 1px solid #eee;
+      padding: 1rem 0;
+    }
+
+    .review strong {
+      display: block;
+      margin-bottom: 0.25rem;
+    }
+
+    @media (max-width: 768px) {
+      .product-page {
+        flex-direction: column;
+      }
+
+      .product-images img {
+        height: 280px;
+      }
+
+      .thumbnail-slider img {
+        width: 38px;
+        height: 38px;
+      }
+
+      .buttons {
+        flex-direction: column;
+      }
+
+      .buttons button {
+        width: 100%;
+      }
+    }
+
+
+.similar-list {
+  display: flex;
+  gap: 1rem;
+  overflow-x: auto;
+  padding-bottom: 1rem;
+  scrollbar-width: thin;
+  scrollbar-color: hsl(0, 100%, 70%) #f2f2f2; /* pink thumb on gray track */
+}
+
+.similar-list::-webkit-scrollbar {
+  height: 8px;
+}
+
+.similar-list::-webkit-scrollbar-track {
+  background: #f2f2f2;
+  border-radius: 10px;
+}
+
+.similar-list::-webkit-scrollbar-thumb {
+  background: hsl(0, 100%, 70%);
+  border-radius: 10px;
+  border: 2px solid #f2f2f2;
+}
+
+
+  </style>
 </head>
 <body>
   <div class="container">
-    <h2>User Registration</h2>
-    <form id="registerForm">
-      <input type="text" name="name" placeholder="Full Name" required />
-      <input type="email" name="email" placeholder="Email Address" required />
-      <input type="password" name="password" placeholder="Password" required />
-      <button type="submit">Register</button>
-    </form>
-    <p id="message"></p>
+    <div class="product-page">
+      <div class="product-images">
+        <img id="mainImage" src="cloth.png" alt="Main Product">
+        <div class="thumbnail-slider" id="slider">
+          <img class="thumb active" src="cloth.png">
+          <img class="thumb" src="cloth.png">
+          <img class="thumb" src="cloth.png">
+          <img class="thumb" src="iphone.jpg">
+        </div>
+      </div>
+      <div class="product-details">
+        <div class="product-info">
+          <h1>Elegant Women's Sneakers</h1>
+          <div class="price">₦15,000</div>
+          <p class="description">These stylish pink sneakers offer comfort, breathability, and a sleek look perfect for everyday wear.</p>
+          <div class="sizes">
+            <h3>Select Size:</h3>
+            <div class="size-options">
+              <div class="size-box" onclick="selectSize(this)">36</div>
+              <div class="size-box" onclick="selectSize(this)">37</div>
+              <div class="size-box" onclick="selectSize(this)">38</div>
+              <div class="size-box" onclick="selectSize(this)">39</div>
+              <div class="size-box" onclick="selectSize(this)">40</div>
+            </div>
+          </div>
+        </div>
+        <div class="buttons">
+          <button class="add-to-cart">Add to Cart</button>
+          <button class="buy-now">Buy Now</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ✅ SIMILAR PRODUCTS -->
+    <div class="similar-products">
+      <h2>Similar Products</h2>
+      <div class="similar-list">
+        <div class="similar-card">
+          <img src="cloth.png" alt="Soft Mesh Sneaker">
+          <p>Soft Mesh Sneaker</p>
+          <a href="#">View</a>
+        </div>
+        <div class="similar-card">
+          <img src="iphone.jpg" alt="Classic White">
+          <p>Classic White</p>
+          <a href="#">View</a>
+        </div>
+        <div class="similar-card">
+          <img src="cloth.png" alt="Pink Luxe">
+          <p>Pink Luxe</p>
+          <a href="#">View</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- ✅ REVIEWS -->
+    <div class="reviews">
+      <h2>Customer Reviews</h2>
+      <form id="reviewForm">
+        <input type="text" id="name" placeholder="Your Name" required>
+        <textarea id="comment" placeholder="Write a review..." required></textarea>
+        <div class="stars" id="starSelect">
+          <span data-value="1">&#9733;</span>
+          <span data-value="2">&#9733;</span>
+          <span data-value="3">&#9733;</span>
+          <span data-value="4">&#9733;</span>
+          <span data-value="5">&#9733;</span>
+        </div>
+        <input type="hidden" id="rating" value="0">
+        <button type="submit">Submit Review</button>
+      </form>
+      <div id="allReviews"></div>
+    </div>
   </div>
-  <script src="public/script.js"></script>
+
+  <script>
+    const images = ["cloth.png", "cloth.png", "cloth.png", "iphone.jpg"];
+    const mainImg = document.getElementById("mainImage");
+    const thumbnails = document.querySelectorAll('.thumb');
+    let currentIndex = 0;
+    let intervalId;
+
+    function changeImage(index) {
+      mainImg.src = images[index];
+      thumbnails.forEach((img, i) => {
+        img.classList.toggle('active', i === index);
+      });
+    }
+
+    function autoSlide() {
+      currentIndex = (currentIndex + 1) % images.length;
+      changeImage(currentIndex);
+    }
+
+    function manualChange(el) {
+      clearInterval(intervalId);
+      currentIndex = [...thumbnails].indexOf(el);
+      changeImage(currentIndex);
+      intervalId = setInterval(autoSlide, 3000);
+    }
+
+    intervalId = setInterval(autoSlide, 3000);
+    thumbnails.forEach(thumb => {
+      thumb.addEventListener('click', () => manualChange(thumb));
+    });
+
+    let selectedSize = null;
+    function selectSize(el) {
+      document.querySelectorAll('.size-box').forEach(box => box.classList.remove('selected'));
+      el.classList.add('selected');
+      selectedSize = el.textContent;
+    }
+
+    document.querySelector('.add-to-cart').addEventListener('click', () => {
+      if (!selectedSize) {
+        alert('Please select a size before adding to cart.');
+      } else {
+        alert(`Size ${selectedSize} added to cart!`);
+      }
+    });
+
+    document.querySelector('.buy-now').addEventListener('click', () => {
+      if (!selectedSize) {
+        alert('Please select a size before buying.');
+      } else {
+        alert(`Proceeding to checkout with size ${selectedSize}...`);
+      }
+    });
+
+    const stars = document.querySelectorAll('#starSelect span');
+    const ratingInput = document.getElementById('rating');
+
+    stars.forEach(star => {
+      star.addEventListener('click', () => {
+        const value = parseInt(star.dataset.value);
+        ratingInput.value = value;
+        stars.forEach(s => s.classList.remove('selected'));
+        for (let i = 0; i < value; i++) {
+          stars[i].classList.add('selected');
+        }
+      });
+    });
+
+    document.getElementById('reviewForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const name = document.getElementById('name').value;
+      const comment = document.getElementById('comment').value;
+      const rating = parseInt(document.getElementById('rating').value);
+
+      if (!rating) return alert('Please select a star rating.');
+
+      try {
+        const res = await fetch('https://your-vercel-app.vercel.app/api/reviews', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name, comment, rating })
+        });
+
+        if (res.ok) {
+          alert("Review submitted!");
+          loadReviews();
+          document.getElementById('reviewForm').reset();
+          stars.forEach(s => s.classList.remove('selected'));
+        } else {
+          alert("Failed to submit review.");
+        }
+      } catch (err) {
+        console.error(err);
+        alert("Error submitting review.");
+      }
+    });
+
+    async function loadReviews() {
+      try {
+        const res = await fetch('https://your-vercel-app.vercel.app/api/reviews');
+        const reviews = await res.json();
+        const container = document.getElementById('allReviews');
+        container.innerHTML = '';
+        reviews.forEach(r => {
+          container.innerHTML += `
+            <div class="review">
+              <strong>${r.name}</strong>
+              <div>${'★'.repeat(r.rating)}${'☆'.repeat(5 - r.rating)}</div>
+              <p>${r.comment}</p>
+            </div>
+          `;
+        });
+      } catch (err) {
+        console.error("Failed to load reviews.");
+      }
+    }
+
+    loadReviews();
+  </script>
 </body>
 </html>
