@@ -1,9 +1,17 @@
-// /api/createOrder.js
-
 import clientPromise from './db';
 import nodemailer from 'nodemailer';
 
 export default async function handler(req, res) {
+  // CORS headers
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+
+  // Handle preflight
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
+  }
+
   if (req.method !== 'POST') {
     return res.status(405).json({ message: 'Method not allowed' });
   }
@@ -29,7 +37,6 @@ export default async function handler(req, res) {
       return res.status(400).json({ message: 'Missing required fields' });
     }
 
-    // Create order object
     const order = {
       name,
       email,
@@ -44,10 +51,8 @@ export default async function handler(req, res) {
       createdAt: new Date()
     };
 
-    // Save to database
     await orders.insertOne(order);
 
-    // Send confirmation email
     await sendOrderConfirmationEmail(name, email, order);
 
     res.status(201).json({ message: 'Order created and confirmation sent' });
