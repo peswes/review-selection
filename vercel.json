@@ -1,0 +1,39 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "api/*.js",
+      "use": "@vercel/node"
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/api/reviews",
+      "destination": "/api/reviews.js"
+    },
+    {
+      "source": "/api/adminLogin",
+      "destination": "/api/adminLogin.js"
+    },
+    {
+      "source": "/api/saveOrder",
+      "destination": "/api/saveOrder.js"
+    },
+    {
+      "source": "/api/sendNotification",
+      "destination": "/api/sendNotification.js"
+    },
+    {
+      "source": "/api/updateOrder",
+      "destination": "/api/updateOrder.js"
+    },
+    {
+      "source": "/api/createOrder",
+      "destination": "/api/createOrder.js"
+    },
+    {
+      "source": "/api/paystackWebhook",
+      "destination": "/api/paystackWebhook.js"
+    }
+  ]
+}
