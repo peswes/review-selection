@@ -11,7 +11,6 @@ export default async function handler(req, res) {
   res.setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
 
-  // ✅ Handle preflight OPTIONS request
   if (req.method === "OPTIONS") {
     return res.status(200).end();
   }
@@ -22,12 +21,14 @@ export default async function handler(req, res) {
     const reviews = db.collection(collectionName);
 
     if (req.method === "POST") {
-      const { name, comment, rating } = req.body;
-      if (!name || !comment || !rating) {
+      const { productId, name, comment, rating } = req.body;
+
+      if (!productId || !name || !comment || !rating) {
         return res.status(400).json({ message: "All fields are required." });
       }
 
       const review = {
+        productId,
         name,
         comment,
         rating: parseInt(rating),
@@ -38,8 +39,18 @@ export default async function handler(req, res) {
       return res.status(201).json({ message: "Review submitted successfully." });
 
     } else if (req.method === "GET") {
-      const allReviews = await reviews.find().sort({ date: -1 }).toArray();
-      return res.status(200).json(allReviews);
+      const { productId } = req.query;
+
+      if (!productId) {
+        return res.status(400).json({ message: "productId query is required." });
+      }
+
+      const productReviews = await reviews
+        .find({ productId })
+        .sort({ date: -1 })
+        .toArray();
+
+      return res.status(200).json(productReviews);
 
     } else {
       return res.status(405).json({ message: "Method Not Allowed" });
