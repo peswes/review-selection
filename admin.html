@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f5f5f5;
+      color: #333;
+    }
+    header {
+      background: hsl(0, 100%, 70%);
+      color: #fff;
+      text-align: center;
+      padding: 15px 10px;
+    }
+    .container {
+      max-width: 1000px;
+      margin: 20px auto;
+      background: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    th, td {
+      padding: 12px;
+      text-align: center;
+      border-bottom: 1px solid #ddd;
+    }
+    th {
+      background: hsl(0, 100%, 70%);
+      color: #fff;
+    }
+    button {
+      background: hsl(0, 100%, 70%);
+      color: white;
+      border: none;
+      padding: 5px 10px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .login-section {
+      max-width: 400px;
+      margin: 100px auto;
+      background: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+    input {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+  </style>
+</head>
+<body>
+
+<div id="login" class="login-section">
+  <h2>Admin Login</h2>
+  <input type="text" id="username" placeholder="Username">
+  <input type="password" id="password" placeholder="Password">
+  <button onclick="login()">Login</button>
+</div>
+
+<div id="dashboard" style="display: none;">
+  <header>
+    <h1>Admin Dashboard</h1>
+    <button onclick="logout()">Logout</button>
+  </header>
+  <div class="container">
+    <h2>Customer Orders</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Phone</th>
+          <th>Address</th>
+          <th>Total</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody id="ordersTable"></tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+  async function login() {
+    const username = document.getElementById('username').value.trim();
+    const password = document.getElementById('password').value.trim();
+
+    const BACKEND_URL = 'https://your-vercel-deployment-url.vercel.app';
+
+
+  const response = await fetch(`${BACKEND_URL}/api/adminLogin`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username, password })
+    });
+
+    if (response.ok) {
+      sessionStorage.setItem('isAdmin', 'true');
+      showDashboard();
+    } else {
+      alert('Invalid credentials');
+    }
+  }
+
+  function logout() {
+    sessionStorage.removeItem('isAdmin');
+    location.reload();
+  }
+
+  function showDashboard() {
+    document.getElementById('login').style.display = 'none';
+    document.getElementById('dashboard').style.display = 'block';
+    loadOrders();
+  }
+
+  async function loadOrders() {
+    const res = await fetch('/api/getOrders');
+    const orders = await res.json();
+    const table = document.getElementById('ordersTable');
+    table.innerHTML = '';
+
+    orders.forEach(order => {
+      table.innerHTML += `
+        <tr>
+          <td>${order.name}</td>
+          <td>${order.email}</td>
+          <td>${order.phone}</td>
+          <td>${order.address}</td>
+          <td>₦${order.finalTotal}</td>
+          <td>${order.status}</td>
+        </tr>
+      `;
+    });
+  }
+
+  if (sessionStorage.getItem('isAdmin') === 'true') {
+    showDashboard();
+  }
+</script>
+
+</body>
+</html>
