@@ -1,7 +1,7 @@
 
 // /api/saveOrder.js
 
-import clientPromise from './db';
+import clientPromise from './db.js';
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
