@@ -1,13 +1,11 @@
-import clientPromise from './db.js';
+import clientPromise from './db';
 import nodemailer from 'nodemailer';
 
 export default async function handler(req, res) {
-  // CORS headers
   res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Methods', 'POST,OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
-  // Handle preflight
   if (req.method === 'OPTIONS') {
     return res.status(200).end();
   }
@@ -22,15 +20,8 @@ export default async function handler(req, res) {
     const orders = db.collection('orders');
 
     const {
-      name,
-      email,
-      phone,
-      country,
-      state,
-      address,
-      deliveryOption,
-      finalTotal,
-      cartItems
+      name, email, phone, country, state, address,
+      deliveryOption, finalTotal, cartItems
     } = req.body;
 
     if (!name || !email || !phone || !address || !cartItems || cartItems.length === 0) {
@@ -38,25 +29,16 @@ export default async function handler(req, res) {
     }
 
     const order = {
-      name,
-      email,
-      phone,
-      country,
-      state,
-      address,
-      deliveryOption,
-      finalTotal,
-      cartItems,
+      name, email, phone, country, state, address,
+      deliveryOption, finalTotal, cartItems,
       status: 'Pending',
       createdAt: new Date()
     };
 
     await orders.insertOne(order);
-
     await sendOrderConfirmationEmail(name, email, order);
 
     res.status(201).json({ message: 'Order created and confirmation sent' });
-    
   } catch (err) {
     console.error('Error creating order:', err);
     res.status(500).json({ message: 'Internal server error' });
@@ -72,7 +54,7 @@ async function sendOrderConfirmationEmail(name, email, order) {
     }
   });
 
-  const productSummary = order.cartItems.map(item => 
+  const productSummary = order.cartItems.map(item =>
     `- ${item.name} (Qty: ${item.quantity}, Price: ₦${item.price})`
   ).join('\n');
 
