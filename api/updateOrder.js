@@ -1,6 +1,6 @@
 // /api/updateOrder.js
 
-import clientPromise from './db';
+import clientPromise from './db.js';
 import { ObjectId } from 'mongodb';
 
 export default async function handler(req, res) {
