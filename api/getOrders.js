@@ -1,23 +1,28 @@
-// /api/get-orders.js
-import { MongoClient } from 'mongodb';
+import clientPromise from './db';
 
 export default async function handler(req, res) {
   if (req.method !== 'GET') {
+    res.setHeader('Allow', ['GET']);
     return res.status(405).json({ message: 'Method not allowed' });
   }
 
-  const client = new MongoClient(process.env.MONGODB_URI);
-
   try {
-    await client.connect();
-    const db = client.db();
-    const orders = await db.collection('orders').find().sort({ createdAt: -1 }).toArray();
+    const client = await clientPromise;
+    const db = client.db('shopDB'); // replace with your DB name
 
-    res.status(200).json(orders);
+    const orders = await db.collection('orders')
+      .find()
+      .sort({ createdAt: -1 })
+      .toArray();
+
+    // Optional: CORS headers
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET');
+
+    return res.status(200).json(orders);
+
   } catch (error) {
     console.error('Error fetching orders:', error);
-    res.status(500).json({ message: 'Failed to fetch orders' });
-  } finally {
-    await client.close();
+    return res.status(500).json({ message: 'Failed to fetch orders' });
   }
 }
