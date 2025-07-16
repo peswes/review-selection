@@ -1,4 +1,4 @@
-import clientPromise from './db.js';  // Added .js extension
+
 import nodemailer from 'nodemailer';
 
 export default async function handler(req, res) {
