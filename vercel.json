@@ -34,6 +34,10 @@
     {
       "source": "/api/paystackWebhook",
       "destination": "/api/paystackWebhook.js"
+    },
+      {
+      "source": "/api/getOrders",
+      "destination": "/api/getOrders"
     }
   ]
 }
